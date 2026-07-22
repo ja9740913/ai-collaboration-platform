@@ -2,6 +2,8 @@
 
 這是正式「多 AI 協作平台」的匿名化作品展示。頁面保留產品定位、九種協作模式、代理路由、證據與記憶、SSE 串流交付、測試與安全設計，並以純前端模擬提供可操作的多 AI 決策流程。
 
+- 公開網站：<https://ja9740913.github.io/ai-collaboration-platform/>
+
 ## 為什麼是展示版
 
 正式平台會連接 OpenAI、Anthropic、Claude Code SDK、Codex CLI 與本機 SQLite，資料庫中也有真實研究紀錄。公開版本刻意不包含：
