@@ -1,0 +1,76 @@
+{
+  "risk": [
+    {
+      "type": "error",
+      "code": "RATE_LIMITED",
+      "message": "匿名 Fixture：模擬供應商暫時流量受限。",
+      "retryable": true,
+      "retryAfterMs": 20
+    },
+    {
+      "type": "success",
+      "value": {
+        "role": "risk",
+        "stance": "caution",
+        "summary": "四週可完成受限試點，但全量上線的資料與責任風險過高。",
+        "findings": [
+          {
+            "id": "risk-01",
+            "title": "錯誤回答直接送出",
+            "severity": "critical",
+            "evidence": "限制條件要求人工覆核，但需求尚未定義未通過時的阻擋行為。",
+            "recommendation": "所有低信心或未命中 golden set 的回答強制轉人工。"
+          },
+          {
+            "id": "risk-02",
+            "title": "個資傳輸邊界",
+            "severity": "high",
+            "evidence": "客服內容可能包含姓名、電話或訂單資料。",
+            "recommendation": "送入模型前執行欄位遮罩，並保留資料流向稽核紀錄。"
+          }
+        ],
+        "confidence": 0.9
+      }
+    }
+  ],
+  "delivery": [
+    {
+      "type": "success",
+      "value": {
+        "role": "delivery",
+        "stance": "support",
+        "summary": "以兩週建置、兩週觀測的方式可以交付一條可驗收的 FAQ 試點。",
+        "findings": [
+          {
+            "id": "delivery-01",
+            "title": "驗收資料需先固定",
+            "severity": "high",
+            "evidence": "若開發完成後才挑測試題，會產生選題偏誤。",
+            "recommendation": "第一週先凍結 50 題 golden set、責任人與評分規則。"
+          }
+        ],
+        "confidence": 0.86
+      }
+    }
+  ],
+  "user": [
+    {
+      "type": "success",
+      "value": {
+        "role": "user",
+        "stance": "caution",
+        "summary": "使用者願意試用，但需要知道何時轉真人且不想重述問題。",
+        "findings": [
+          {
+            "id": "user-01",
+            "title": "轉人工時遺失上下文",
+            "severity": "high",
+            "evidence": "目前需求只寫一鍵轉接，沒有要求同步對話摘要與已收集資料。",
+            "recommendation": "轉人工時一併傳遞問題摘要、引用來源與未解決原因。"
+          }
+        ],
+        "confidence": 0.82
+      }
+    }
+  ]
+}
