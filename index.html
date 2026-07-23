@@ -3,717 +3,565 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="多 AI 協作平台公開展示版：把模糊問題拆成多角色研究、交叉檢視與可驗證的決策輸出。">
-  <meta name="theme-color" content="#08111f">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="多 AI 協作平台｜互動作品展示">
-  <meta property="og:description" content="九種多角色協作模式、互動決策模擬、系統架構與工程證據。">
-  <meta property="og:url" content="https://ja9740913.github.io/ai-collaboration-platform/">
-  <link rel="canonical" href="https://ja9740913.github.io/ai-collaboration-platform/">
-  <title>多 AI 協作平台｜互動作品展示</title>
+  <meta name="description" content="可執行、可測試、可追溯的多 AI 提案評審工作流工程案例。">
+  <meta name="theme-color" content="#081411">
+  <title>AI Collaboration Platform｜可驗證的多 AI 工作流</title>
   <style>
     :root {
-      color-scheme: dark;
-      --bg: #07101d;
-      --bg-soft: #0b1728;
-      --panel: rgba(14, 29, 49, .78);
-      --panel-solid: #0e1d31;
-      --line: rgba(157, 181, 216, .16);
-      --line-strong: rgba(116, 225, 213, .34);
-      --text: #f4f8ff;
-      --muted: #9eb0c8;
-      --faint: #71839c;
-      --mint: #69e0cf;
-      --mint-bright: #a3fff1;
-      --blue: #78a9ff;
-      --violet: #b68cff;
-      --amber: #ffc86b;
-      --red: #ff8d9a;
-      --green: #84e38d;
-      --shadow: 0 24px 70px rgba(0, 0, 0, .34);
-      --radius-lg: 28px;
-      --radius: 18px;
-      --radius-sm: 12px;
-      --max: 1180px;
+      --ink: #10201b;
+      --muted: #5f6f68;
+      --paper: #f5f2e9;
+      --card: rgba(255, 255, 255, .76);
+      --line: rgba(16, 32, 27, .13);
+      --dark: #081411;
+      --dark-2: #11251f;
+      --mint: #80f2bd;
+      --mint-2: #c9ffe4;
+      --amber: #ffcc66;
+      --red: #ff897d;
+      --blue: #84b7ff;
+      --radius: 24px;
+      --shadow: 0 18px 55px rgba(9, 25, 19, .12);
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      min-width: 320px;
+      color: var(--ink);
       background:
-        radial-gradient(circle at 12% 0%, rgba(68, 114, 210, .18), transparent 30rem),
-        radial-gradient(circle at 88% 8%, rgba(61, 196, 173, .13), transparent 28rem),
-        linear-gradient(180deg, #07101d 0%, #081321 42%, #050c16 100%);
-      color: var(--text);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+        radial-gradient(circle at 8% 8%, rgba(128, 242, 189, .24), transparent 28rem),
+        radial-gradient(circle at 92% 35%, rgba(255, 204, 102, .18), transparent 26rem),
+        var(--paper);
+      font-family: var(--sans);
       line-height: 1.65;
-      -webkit-font-smoothing: antialiased;
     }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: .22;
-      background-image:
-        linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.022) 1px, transparent 1px);
-      background-size: 32px 32px;
-      mask-image: linear-gradient(to bottom, black, transparent 82%);
-    }
-    button, textarea, input { font: inherit; }
+    a { color: inherit; }
     button, a { -webkit-tap-highlight-color: transparent; }
-    a { color: inherit; text-decoration: none; }
-    button { color: inherit; }
-
-    .container { width: min(calc(100% - 40px), var(--max)); margin-inline: auto; }
-    .skip-link {
-      position: fixed; top: 10px; left: 10px; z-index: 100;
-      padding: 10px 14px; border-radius: 10px; background: white; color: #07101d;
-      transform: translateY(-160%); transition: transform .2s;
+    :focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+    .wrap { width: min(1160px, calc(100% - 36px)); margin-inline: auto; }
+    .skip {
+      position: fixed; top: 12px; left: 12px; z-index: 99;
+      padding: 10px 14px; border-radius: 12px; background: white;
+      transform: translateY(-180%); transition: transform .2s;
     }
-    .skip-link:focus { transform: translateY(0); }
-    .site-header {
-      position: sticky; top: 0; z-index: 50;
-      border-bottom: 1px solid rgba(255,255,255,.07);
-      background: rgba(7, 16, 29, .76);
+    .skip:focus { transform: none; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 20;
+      border-bottom: 1px solid rgba(255,255,255,.09);
+      background: rgba(8, 20, 17, .91);
+      color: #eafff4;
       backdrop-filter: blur(18px);
     }
-    .header-inner {
-      min-height: 70px; display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    .topbar .wrap {
+      min-height: 68px; display: flex; align-items: center;
+      justify-content: space-between; gap: 20px;
     }
-    .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: -.02em; }
-    .brand-mark {
-      width: 34px; aspect-ratio: 1; display: grid; place-items: center; border-radius: 11px;
-      color: #06221d; background: linear-gradient(135deg, var(--mint-bright), var(--mint));
-      box-shadow: 0 0 30px rgba(105, 224, 207, .2);
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 800; text-decoration: none; }
+    .mark {
+      width: 32px; height: 32px; border: 1px solid rgba(128,242,189,.48);
+      border-radius: 10px; display: grid; place-items: center; color: var(--mint);
+      background: rgba(128,242,189,.08); font: 800 15px var(--mono);
     }
-    .brand-mark svg { width: 19px; height: 19px; }
-    .brand small { color: var(--mint); font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; }
-    .brand-copy { display: flex; flex-direction: column; line-height: 1.15; }
-    .site-nav { display: flex; align-items: center; gap: 5px; color: var(--muted); font-size: .92rem; }
-    .site-nav a { padding: 9px 12px; border-radius: 10px; }
-    .site-nav a:hover, .site-nav a:focus-visible { color: white; background: rgba(255,255,255,.06); outline: none; }
-    .nav-cta { border: 1px solid var(--line-strong); color: var(--mint-bright) !important; }
+    nav { display: flex; align-items: center; gap: 22px; font-size: 14px; }
+    nav a { color: #bbccc5; text-decoration: none; }
+    nav a:hover { color: white; }
+    .nav-cta {
+      border: 1px solid rgba(128,242,189,.45); border-radius: 999px;
+      padding: 8px 13px; color: var(--mint) !important;
+    }
 
-    .hero { padding: 88px 0 54px; position: relative; }
-    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(340px, .88fr); gap: 58px; align-items: center; }
-    .eyebrow {
-      display: inline-flex; align-items: center; gap: 9px; margin-bottom: 18px;
-      color: var(--mint-bright); font-size: .84rem; font-weight: 750; letter-spacing: .09em;
+    .hero {
+      position: relative; overflow: hidden; color: white;
+      background: linear-gradient(145deg, var(--dark) 0%, #102c22 68%, #194331 100%);
+      padding: 94px 0 72px;
     }
-    .eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--mint); box-shadow: 0 0 9px var(--mint); }
-    h1, h2, h3, p { margin-top: 0; }
-    h1 { margin-bottom: 22px; font-size: clamp(2.7rem, 6.1vw, 5.35rem); line-height: 1.02; letter-spacing: -.066em; }
-    .gradient-text { color: transparent; background: linear-gradient(108deg, #fff 2%, #a4fff2 42%, #9dbdff 88%); background-clip: text; }
-    .hero-lead { max-width: 680px; margin-bottom: 30px; color: #c3d0e2; font-size: clamp(1.03rem, 1.8vw, 1.22rem); }
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
+    .hero::after {
+      content: ""; position: absolute; right: -9rem; top: -12rem; width: 38rem; height: 38rem;
+      border: 1px solid rgba(128,242,189,.22); border-radius: 50%;
+      box-shadow: 0 0 0 80px rgba(128,242,189,.035), 0 0 0 160px rgba(128,242,189,.025);
+    }
+    .hero-grid {
+      position: relative; z-index: 1; display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(330px, .85fr); gap: 56px; align-items: center;
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 9px; margin-bottom: 20px;
+      color: var(--mint); font: 700 13px var(--mono); letter-spacing: .08em; text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 28px; height: 1px; background: currentColor; }
+    h1 { max-width: 800px; margin: 0; font-size: clamp(42px, 6.6vw, 76px); line-height: 1.04; letter-spacing: -.055em; }
+    h1 em { color: var(--mint); font-style: normal; }
+    .lead { max-width: 690px; margin: 25px 0 0; color: #bdcec7; font-size: clamp(17px, 2vw, 21px); }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
     .button {
-      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-      min-height: 48px; padding: 0 19px; border-radius: 13px; border: 1px solid transparent;
-      cursor: pointer; font-weight: 760; transition: transform .18s, border-color .18s, background .18s;
+      display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: 9px;
+      padding: 11px 18px; border: 1px solid transparent; border-radius: 14px;
+      font: 750 15px var(--sans); text-decoration: none; cursor: pointer; transition: .18s ease;
     }
     .button:hover { transform: translateY(-2px); }
-    .button-primary { color: #05231e; background: linear-gradient(135deg, var(--mint-bright), var(--mint)); box-shadow: 0 12px 32px rgba(63, 198, 180, .18); }
-    .button-secondary { background: rgba(255,255,255,.045); border-color: var(--line); color: #dfe9f7; }
-    .button-secondary:hover { border-color: rgba(255,255,255,.28); }
-    .hero-note { display: flex; flex-wrap: wrap; gap: 16px 22px; color: var(--muted); font-size: .84rem; }
-    .hero-note span { display: inline-flex; align-items: center; gap: 7px; }
-    .hero-note span::before { content: "✓"; color: var(--green); font-weight: 900; }
+    .button.primary { color: var(--dark); background: var(--mint); box-shadow: 0 12px 26px rgba(128,242,189,.18); }
+    .button.ghost { color: white; border-color: rgba(255,255,255,.22); background: rgba(255,255,255,.05); }
+    .button.light { background: var(--dark); color: white; }
+    .button.outline { border-color: var(--line); background: rgba(255,255,255,.6); }
 
-    .hero-orbit { position: relative; min-height: 480px; display: grid; place-items: center; }
-    .orbit-glow { position: absolute; width: 360px; height: 360px; border-radius: 50%; background: radial-gradient(circle, rgba(105,224,207,.14), transparent 66%); filter: blur(10px); }
-    .orbit-ring { position: absolute; width: 355px; aspect-ratio: 1; border: 1px solid rgba(150,177,214,.16); border-radius: 50%; }
-    .orbit-ring::before, .orbit-ring::after { content: ""; position: absolute; inset: 44px; border: 1px dashed rgba(150,177,214,.12); border-radius: 50%; }
-    .orbit-ring::after { inset: 104px; border-style: solid; border-color: rgba(105,224,207,.16); }
-    .core-card {
-      position: relative; z-index: 2; width: 238px; min-height: 168px; padding: 24px;
-      border: 1px solid rgba(163,255,241,.28); border-radius: 24px;
-      background: linear-gradient(155deg, rgba(23,48,70,.94), rgba(10,25,42,.93));
-      box-shadow: var(--shadow), inset 0 1px rgba(255,255,255,.08); text-align: center;
+    .terminal {
+      position: relative; border: 1px solid rgba(255,255,255,.14); border-radius: 22px;
+      overflow: hidden; background: #050c0a; box-shadow: 0 30px 80px rgba(0,0,0,.35);
+      transform: rotate(1.2deg);
     }
-    .core-icon { width: 51px; height: 51px; margin: 0 auto 13px; border-radius: 16px; display: grid; place-items: center; color: var(--mint-bright); background: rgba(105,224,207,.09); border: 1px solid rgba(105,224,207,.22); }
-    .core-card strong { display: block; font-size: 1.08rem; }
-    .core-card span { color: var(--muted); font-size: .84rem; }
-    .agent-chip {
-      position: absolute; z-index: 3; min-width: 158px; padding: 13px 15px; border-radius: 15px;
-      border: 1px solid var(--line); background: rgba(10,23,39,.9); box-shadow: 0 18px 50px rgba(0,0,0,.32);
-      animation: float 5s ease-in-out infinite;
+    .terminal-head {
+      display: flex; align-items: center; gap: 7px; height: 44px; padding: 0 16px;
+      border-bottom: 1px solid rgba(255,255,255,.09); color: #84958e; font: 12px var(--mono);
     }
-    .agent-chip strong { display: flex; align-items: center; gap: 8px; font-size: .9rem; }
-    .agent-chip small { display: block; margin-top: 3px; color: var(--muted); }
-    .chip-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 12px currentColor; }
-    .agent-a { top: 48px; left: 8px; color: var(--violet); }
-    .agent-b { top: 86px; right: 0; color: var(--blue); animation-delay: -1.6s; }
-    .agent-c { bottom: 42px; left: 50%; transform: translateX(-50%); color: var(--amber); animation-delay: -3s; }
-    @keyframes float { 0%, 100% { margin-top: 0; } 50% { margin-top: -9px; } }
-
-    .metrics { padding: 26px 0 74px; }
-    .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; background: rgba(255,255,255,.024); }
-    .metric { padding: 25px 28px; border-right: 1px solid var(--line); }
-    .metric:last-child { border-right: 0; }
-    .metric strong { display: block; color: white; font-size: clamp(1.45rem, 2.8vw, 2.2rem); letter-spacing: -.04em; }
-    .metric span { color: var(--muted); font-size: .87rem; }
-
-    section { padding: 80px 0; scroll-margin-top: 72px; }
-    .section-heading { max-width: 740px; margin-bottom: 36px; }
-    .kicker { margin-bottom: 10px; color: var(--mint); font-size: .78rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
-    h2 { margin-bottom: 15px; font-size: clamp(2rem, 4.5vw, 3.35rem); line-height: 1.12; letter-spacing: -.048em; }
-    .section-heading > p { color: var(--muted); font-size: 1.02rem; }
-
-    .demo-shell { overflow: hidden; border: 1px solid var(--line); border-radius: 28px; background: rgba(9,22,38,.86); box-shadow: var(--shadow); }
-    .demo-topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 15px 20px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.024); }
-    .window-dots { display: flex; gap: 7px; }
-    .window-dots i { width: 9px; height: 9px; border-radius: 50%; background: #42536a; }
-    .window-dots i:nth-child(1) { background: #ff7f88; }
-    .window-dots i:nth-child(2) { background: #ffd26f; }
-    .window-dots i:nth-child(3) { background: #6de19c; }
-    .demo-status { color: var(--muted); font-size: .78rem; }
-    .demo-status::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 9px var(--green); }
-    .demo-layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); min-height: 650px; }
-    .mode-panel { padding: 20px; border-right: 1px solid var(--line); background: rgba(3,12,22,.38); }
-    .mode-panel h3 { margin: 0 0 14px; color: var(--muted); font-size: .73rem; letter-spacing: .13em; text-transform: uppercase; }
-    .mode-list { display: grid; gap: 7px; }
-    .mode-button {
-      width: 100%; display: flex; align-items: center; gap: 11px; padding: 10px 12px;
-      color: var(--muted); text-align: left; border: 1px solid transparent; border-radius: 11px;
-      background: transparent; cursor: pointer; transition: .18s;
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #ff796f; }
+    .dot:nth-child(2) { background: #ffcc66; }
+    .dot:nth-child(3) { background: #72dba8; }
+    .terminal-title { margin-left: 7px; }
+    .terminal pre {
+      margin: 0; padding: 22px; min-height: 306px; overflow: auto; color: #b9c8c2;
+      font: 12px/1.7 var(--mono); white-space: pre-wrap;
     }
-    .mode-button:hover { color: white; background: rgba(255,255,255,.04); }
-    .mode-button[aria-pressed="true"] { color: var(--mint-bright); border-color: rgba(105,224,207,.22); background: rgba(105,224,207,.08); }
-    .mode-icon { width: 27px; height: 27px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 9px; background: rgba(255,255,255,.055); font-size: .78rem; font-weight: 850; }
-    .demo-main { padding: 28px; min-width: 0; }
-    .demo-intro { display: flex; align-items: flex-start; justify-content: space-between; gap: 25px; margin-bottom: 23px; }
-    .demo-intro h3 { margin-bottom: 6px; font-size: 1.35rem; }
-    .demo-intro p { margin: 0; color: var(--muted); font-size: .9rem; }
-    .privacy-tag { flex: 0 0 auto; padding: 7px 10px; border: 1px solid rgba(132,227,141,.23); border-radius: 999px; color: var(--green); background: rgba(132,227,141,.06); font-size: .72rem; }
-    .prompt-box { padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.028); }
-    .prompt-label { display: flex; justify-content: space-between; margin-bottom: 9px; color: var(--muted); font-size: .76rem; }
-    textarea {
-      width: 100%; min-height: 86px; resize: vertical; padding: 0; border: 0; outline: none;
-      background: transparent; color: white; font-size: .96rem; line-height: 1.6;
+    .terminal .cmd { color: var(--mint); }
+    .terminal .warn { color: var(--amber); }
+    .terminal .ok { color: #9cd4ff; }
+
+    .proof-strip {
+      position: relative; z-index: 2; margin-top: -26px;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      border: 1px solid var(--line); border-radius: 20px; overflow: hidden;
+      background: rgba(255,255,255,.9); box-shadow: var(--shadow);
     }
-    .prompt-actions { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-top: 13px; }
-    .agents-preview { display: flex; align-items: center; gap: 6px; }
-    .avatar { width: 28px; height: 28px; display: grid; place-items: center; border: 2px solid var(--panel-solid); border-radius: 50%; background: #263852; font-size: .67rem; font-weight: 850; }
-    .avatar + .avatar { margin-left: -10px; }
-    .agents-preview small { margin-left: 4px; color: var(--muted); }
-    .run-button { min-width: 132px; min-height: 43px; padding: 0 16px; border: 0; border-radius: 11px; background: var(--mint); color: #06221d; cursor: pointer; font-weight: 850; }
-    .run-button:disabled { opacity: .6; cursor: wait; }
-    .activity { margin-top: 22px; display: grid; gap: 10px; }
-    .activity-step { display: flex; align-items: center; gap: 12px; color: var(--faint); font-size: .83rem; }
-    .activity-step::before { content: ""; width: 8px; height: 8px; flex: 0 0 auto; border-radius: 50%; background: #34465e; }
-    .activity-step.active { color: var(--mint-bright); }
-    .activity-step.active::before { background: var(--mint); box-shadow: 0 0 10px var(--mint); animation: pulse 1s infinite; }
-    .activity-step.done { color: #b7c6da; }
-    .activity-step.done::before { background: var(--green); }
-    @keyframes pulse { 50% { opacity: .4; transform: scale(.8); } }
-    .results { margin-top: 22px; display: none; gap: 12px; grid-template-columns: repeat(3, 1fr); }
-    .results.visible { display: grid; animation: reveal .4s ease both; }
-    @keyframes reveal { from { opacity: 0; transform: translateY(8px); } }
-    .agent-result { padding: 17px; border: 1px solid var(--line); border-radius: 15px; background: rgba(255,255,255,.025); }
-    .agent-result header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
-    .agent-result strong { font-size: .86rem; }
-    .agent-result .tag { font-size: .65rem; color: var(--muted); }
-    .agent-result p { margin: 0; color: #b9c8dc; font-size: .79rem; line-height: 1.55; }
-    .result-claude { border-top-color: var(--violet); }
-    .result-gpt { border-top-color: var(--blue); }
-    .result-user { border-top-color: var(--amber); }
-    .synthesis { display: none; margin-top: 12px; padding: 19px; border: 1px solid rgba(105,224,207,.24); border-radius: 16px; background: linear-gradient(135deg, rgba(105,224,207,.075), rgba(120,169,255,.05)); }
-    .synthesis.visible { display: block; animation: reveal .45s ease both; }
-    .synthesis-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 11px; }
-    .synthesis h4 { margin: 0; font-size: .96rem; }
-    .confidence { color: var(--mint); font-size: .74rem; }
-    .decision-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 15px; }
-    .decision-grid p { margin: 0; color: #c6d4e5; font-size: .83rem; }
-    .next-step { padding-left: 15px; border-left: 1px solid var(--line-strong); }
-    .next-step b { color: white; }
+    .proof { padding: 21px 24px; border-right: 1px solid var(--line); }
+    .proof:last-child { border-right: 0; }
+    .proof strong { display: block; font-size: 27px; line-height: 1.2; letter-spacing: -.035em; }
+    .proof span { color: var(--muted); font-size: 13px; }
 
-    .capability-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-    .capability-card { min-height: 184px; padding: 23px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.023); transition: transform .2s, border-color .2s; }
-    .capability-card:hover { transform: translateY(-4px); border-color: rgba(105,224,207,.25); }
-    .card-number { color: var(--mint); font: 800 .74rem/1 ui-monospace, SFMono-Regular, Consolas, monospace; }
-    .capability-card h3 { margin: 27px 0 7px; font-size: 1.05rem; }
-    .capability-card p { margin: 0; color: var(--muted); font-size: .86rem; }
+    section { padding: 90px 0; }
+    .section-kicker { margin: 0 0 12px; color: #257254; font: 750 13px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    h2 { margin: 0; max-width: 850px; font-size: clamp(32px, 4.4vw, 52px); line-height: 1.1; letter-spacing: -.045em; }
+    .section-intro { max-width: 720px; margin: 20px 0 0; color: var(--muted); font-size: 18px; }
+    h3 { margin: 0; font-size: 22px; line-height: 1.25; letter-spacing: -.025em; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
 
-    .architecture-panel { border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 34px; background: linear-gradient(155deg, rgba(18,39,62,.72), rgba(7,17,30,.7)); }
-    .architecture-flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 28px; align-items: stretch; }
-    .architecture-node { position: relative; min-height: 145px; padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: rgba(4,14,26,.58); }
-    .architecture-node:not(:last-child)::after { content: "→"; position: absolute; right: -20px; top: 50%; color: var(--faint); transform: translateY(-50%); }
-    .node-icon { width: 34px; height: 34px; margin-bottom: 18px; display: grid; place-items: center; border-radius: 11px; color: var(--mint-bright); background: rgba(105,224,207,.08); }
-    .architecture-node strong { display: block; margin-bottom: 5px; font-size: .9rem; }
-    .architecture-node span { color: var(--muted); font-size: .76rem; line-height: 1.45; }
-    .stack-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; margin-top: 30px; }
-    .stack-row span { padding: 7px 11px; border: 1px solid var(--line); border-radius: 999px; color: #b7c6da; background: rgba(255,255,255,.025); font-size: .76rem; }
-
-    .proof-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-    .proof-card { padding: 25px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.022); }
-    .proof-card.highlight { border-color: rgba(105,224,207,.23); background: linear-gradient(135deg, rgba(105,224,207,.06), rgba(255,255,255,.018)); }
-    .proof-head { display: flex; align-items: center; gap: 13px; margin-bottom: 18px; }
-    .proof-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 13px; color: var(--mint-bright); background: rgba(105,224,207,.08); }
-    .proof-card h3 { margin: 0; font-size: 1.02rem; }
-    .proof-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
-    .proof-list li { position: relative; padding-left: 20px; color: var(--muted); font-size: .87rem; }
-    .proof-list li::before { content: ""; position: absolute; left: 0; top: .62em; width: 7px; height: 7px; border: 1px solid var(--mint); border-radius: 2px; transform: rotate(45deg); }
-    .proof-meta { margin-top: 18px; padding-top: 15px; border-top: 1px solid var(--line); color: var(--faint); font-size: .75rem; }
-
-    .case-study { display: grid; grid-template-columns: .88fr 1.12fr; gap: 46px; align-items: start; }
-    .case-copy { position: sticky; top: 100px; }
-    .case-copy p { color: var(--muted); }
-    .role-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
-    .role-pills span { padding: 7px 10px; border: 1px solid var(--line); border-radius: 999px; color: #c3d0e2; font-size: .77rem; }
-    .case-steps { display: grid; gap: 13px; }
-    .case-step { display: grid; grid-template-columns: 45px 1fr; gap: 17px; padding: 22px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.022); }
-    .step-number { width: 45px; height: 45px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 14px; color: var(--mint); font: 800 .78rem/1 ui-monospace, Consolas, monospace; }
-    .case-step h3 { margin-bottom: 5px; font-size: 1rem; }
-    .case-step p { margin: 0; color: var(--muted); font-size: .86rem; }
-
-    .safety-strip { display: grid; grid-template-columns: 1fr auto; gap: 28px; align-items: center; padding: 28px 32px; border: 1px solid rgba(132,227,141,.22); border-radius: var(--radius-lg); background: rgba(132,227,141,.045); }
-    .safety-strip h2 { margin-bottom: 7px; font-size: 1.45rem; letter-spacing: -.025em; }
-    .safety-strip p { margin: 0; color: var(--muted); }
-    .safety-badge { padding: 12px 15px; border-radius: 13px; color: var(--green); background: rgba(132,227,141,.09); font-weight: 800; white-space: nowrap; }
-
-    .final-cta { padding: 96px 0; text-align: center; }
-    .final-card { padding: 54px 30px; overflow: hidden; position: relative; border: 1px solid var(--line-strong); border-radius: 32px; background: linear-gradient(145deg, rgba(23,53,74,.76), rgba(8,22,38,.83)); box-shadow: var(--shadow); }
-    .final-card::before { content: ""; position: absolute; inset: -200px 20% auto; height: 300px; background: radial-gradient(circle, rgba(105,224,207,.2), transparent 64%); }
-    .final-card > * { position: relative; }
-    .final-card h2 { max-width: 760px; margin-inline: auto; }
-    .final-card p { max-width: 650px; margin: 0 auto 25px; color: var(--muted); }
-    .final-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
-    footer { padding: 28px 0 42px; color: var(--faint); font-size: .78rem; }
-    .footer-inner { display: flex; justify-content: space-between; gap: 20px; padding-top: 25px; border-top: 1px solid var(--line); }
-
-    .toast {
-      position: fixed; right: 22px; bottom: 22px; z-index: 80; max-width: min(360px, calc(100% - 44px));
-      padding: 13px 16px; border: 1px solid var(--line-strong); border-radius: 13px;
-      background: #11263b; box-shadow: var(--shadow); color: #dffbf6; font-size: .84rem;
-      opacity: 0; pointer-events: none; transform: translateY(12px); transition: .22s;
+    .case-layout {
+      display: grid; grid-template-columns: .8fr 1.2fr; gap: 24px; align-items: stretch; margin-top: 42px;
     }
-    .toast.visible { opacity: 1; transform: translateY(0); }
-
-    @media (max-width: 980px) {
-      .site-nav a:not(.nav-cta) { display: none; }
-      .hero-grid { grid-template-columns: 1fr; }
-      .hero { padding-top: 66px; }
-      .hero-copy { text-align: center; }
-      .hero-lead { margin-inline: auto; }
-      .hero-actions, .hero-note { justify-content: center; }
-      .hero-orbit { min-height: 440px; }
-      .metric-grid { grid-template-columns: 1fr 1fr; }
-      .metric:nth-child(2) { border-right: 0; }
-      .metric:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
-      .demo-layout { grid-template-columns: 1fr; }
-      .mode-panel { border-right: 0; border-bottom: 1px solid var(--line); }
-      .mode-list { display: flex; overflow-x: auto; padding-bottom: 5px; scrollbar-width: thin; }
-      .mode-button { width: auto; min-width: max-content; }
-      .capability-grid { grid-template-columns: 1fr 1fr; }
-      .architecture-flow { grid-template-columns: 1fr 1fr; }
-      .architecture-node:not(:last-child)::after { display: none; }
-      .architecture-node:last-child { grid-column: 1 / -1; }
-      .case-study { grid-template-columns: 1fr; }
-      .case-copy { position: static; }
+    .brief, .runner, .evidence-card, .owner-card, .limit-card {
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--card);
+      box-shadow: 0 10px 35px rgba(9,25,19,.055);
     }
-
-    @media (max-width: 680px) {
-      .container { width: min(calc(100% - 24px), var(--max)); }
-      .site-header { position: relative; }
-      .header-inner { min-height: 64px; }
-      .brand small { display: none; }
-      .site-nav .nav-cta { padding: 8px 10px; font-size: .78rem; }
-      .hero { padding-top: 48px; }
-      h1 { font-size: clamp(2.55rem, 15vw, 4rem); }
-      .hero-orbit { min-height: 365px; margin-inline: -12px; transform: scale(.88); }
-      .orbit-ring { width: 315px; }
-      .core-card { width: 210px; }
-      .agent-chip { min-width: 138px; padding: 11px; }
-      .agent-a { left: 0; }
-      .agent-b { right: 0; }
-      .metric-grid { grid-template-columns: 1fr; }
-      .metric { border-right: 0; border-bottom: 1px solid var(--line); text-align: center; }
-      .metric:nth-child(3) { border-bottom: 1px solid var(--line); }
-      .metric:last-child { border-bottom: 0; }
-      section { padding: 62px 0; }
-      .demo-topbar { padding: 13px 15px; }
-      .mode-panel { padding: 14px; }
-      .demo-main { padding: 18px 14px; }
-      .demo-intro { display: block; }
-      .privacy-tag { display: inline-block; margin-top: 10px; }
-      .prompt-actions { align-items: flex-end; }
-      .agents-preview small { display: none; }
-      .results.visible { grid-template-columns: 1fr; }
-      .decision-grid { grid-template-columns: 1fr; }
-      .next-step { padding: 12px 0 0; border-left: 0; border-top: 1px solid var(--line-strong); }
-      .capability-grid, .proof-grid, .architecture-flow { grid-template-columns: 1fr; }
-      .architecture-node:last-child { grid-column: auto; }
-      .architecture-panel { padding: 20px 14px; }
-      .safety-strip { grid-template-columns: 1fr; padding: 24px; }
-      .safety-badge { justify-self: start; }
-      .case-step { grid-template-columns: 36px 1fr; padding: 18px 16px; gap: 13px; }
-      .step-number { width: 36px; height: 36px; }
-      .final-card { padding: 42px 18px; }
-      .footer-inner { flex-direction: column; }
+    .brief { padding: 30px; }
+    .brief .label { display: block; margin: 26px 0 9px; color: var(--muted); font: 700 12px var(--mono); text-transform: uppercase; }
+    .brief ul { margin: 0; padding-left: 20px; }
+    .brief li + li { margin-top: 8px; }
+    .tag {
+      display: inline-flex; margin-top: 18px; padding: 6px 9px; border-radius: 8px;
+      color: #165e43; background: #dffff0; font: 700 12px var(--mono);
     }
+    .runner { padding: 0; overflow: hidden; background: #0b1814; color: #eefaf4; }
+    .runner-head { padding: 22px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid rgba(255,255,255,.09); }
+    .runner-head p { margin: 4px 0 0; color: #91a59c; font-size: 13px; }
+    .run-btn {
+      flex: 0 0 auto; border: 0; border-radius: 12px; padding: 10px 14px; cursor: pointer;
+      background: var(--mint); color: var(--dark); font: 800 14px var(--sans);
+    }
+    .run-btn[disabled] { cursor: wait; opacity: .65; }
+    .events { min-height: 350px; padding: 20px 24px 24px; }
+    .event {
+      display: grid; grid-template-columns: 65px 116px 1fr; gap: 13px;
+      padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.07);
+      font: 12px/1.55 var(--mono); animation: rise .25s ease both;
+    }
+    .event time { color: #71857c; }
+    .event .type { color: #a6bbff; }
+    .event.retry .type { color: var(--amber); }
+    .event.done .type { color: var(--mint); }
+    .event .message { color: #d4e2db; }
+    @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+    .runner-empty { color: #73857e; font: 13px/1.7 var(--mono); }
+    .decision {
+      display: none; margin: 0 24px 24px; padding: 19px; border: 1px solid rgba(128,242,189,.24);
+      border-radius: 15px; background: rgba(128,242,189,.075);
+    }
+    .decision.show { display: block; animation: rise .3s ease both; }
+    .decision-label { color: var(--mint); font: 700 11px var(--mono); text-transform: uppercase; }
+    .decision strong { display: block; margin-top: 5px; font-size: 22px; }
+    .decision p { margin: 10px 0 0; color: #aec1b8; font-size: 14px; }
+    .fixture-note { margin-top: 14px; color: var(--muted); font-size: 13px; }
 
+    .architecture { background: #dfe9e2; }
+    .flow {
+      display: grid; grid-template-columns: 1fr 36px 1.25fr 36px 1fr; gap: 10px; align-items: center; margin-top: 42px;
+    }
+    .flow-box {
+      min-height: 170px; padding: 24px; border: 1px solid rgba(16,32,27,.15);
+      border-radius: 20px; background: rgba(255,255,255,.66);
+    }
+    .flow-box.accent { color: white; background: var(--dark-2); }
+    .flow-box small { color: var(--muted); font: 700 11px var(--mono); text-transform: uppercase; }
+    .flow-box.accent small { color: var(--mint); }
+    .flow-box p { margin: 9px 0 0; color: var(--muted); font-size: 14px; }
+    .flow-box.accent p { color: #adc0b7; }
+    .roles { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 17px; }
+    .role { padding: 6px 9px; border-radius: 8px; background: rgba(128,242,189,.12); color: var(--mint); font: 12px var(--mono); }
+    .arrow { text-align: center; color: #4b675c; font-size: 24px; }
+    .design-notes { margin-top: 25px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .design-note { padding: 18px; border-left: 3px solid #3a8767; background: rgba(255,255,255,.44); }
+    .design-note strong { display: block; }
+    .design-note span { color: var(--muted); font-size: 13px; }
+
+    .evidence-grid { margin-top: 42px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .evidence-card { padding: 25px; text-decoration: none; transition: .2s ease; }
+    .evidence-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: rgba(37,114,84,.45); }
+    .evidence-card .num { color: #378164; font: 700 12px var(--mono); }
+    .evidence-card h3 { margin-top: 24px; }
+    .evidence-card p { margin: 10px 0 0; color: var(--muted); font-size: 14px; }
+    .evidence-card .link { display: inline-block; margin-top: 18px; color: #176847; font-weight: 750; font-size: 13px; }
+
+    .ownership { color: white; background: var(--dark); }
+    .ownership .section-kicker { color: var(--mint); }
+    .ownership .section-intro { color: #a8bbb2; }
+    .owner-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 22px; margin-top: 42px; }
+    .owner-card { padding: 30px; border-color: rgba(255,255,255,.12); background: rgba(255,255,255,.045); box-shadow: none; }
+    .owner-card h3 { color: white; }
+    .owner-card ul { margin: 20px 0 0; padding: 0; list-style: none; }
+    .owner-card li {
+      position: relative; padding: 11px 0 11px 27px; color: #b7c8c0;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .owner-card li::before { content: "✓"; position: absolute; left: 0; color: var(--mint); font-weight: 900; }
+    .owner-card.ai li::before { content: "→"; color: var(--amber); }
+    .owner-card .note { margin: 20px 0 0; color: #81968c; font-size: 13px; }
+
+    .limits-grid { margin-top: 42px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .limit-card { padding: 25px; box-shadow: none; }
+    .limit-card .icon { font-size: 22px; }
+    .limit-card h3 { margin-top: 17px; }
+    .limit-card p { color: var(--muted); font-size: 14px; }
+    .limit-card a { color: #176847; font-weight: 700; }
+
+    .cta { padding-top: 30px; }
+    .cta-panel {
+      padding: 48px; border-radius: 28px; color: white;
+      background: linear-gradient(135deg, #183d30, #0a1c17); box-shadow: var(--shadow);
+      display: flex; align-items: center; justify-content: space-between; gap: 32px;
+    }
+    .cta-panel h2 { max-width: 660px; font-size: clamp(30px, 4vw, 46px); }
+    .cta-panel p { margin: 14px 0 0; color: #adc0b7; }
+    footer { padding: 46px 0 60px; color: var(--muted); font-size: 13px; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 20px; }
+    footer a { color: var(--ink); font-weight: 700; }
+
+    @media (max-width: 900px) {
+      nav a:not(.nav-cta) { display: none; }
+      .hero { padding-top: 72px; }
+      .hero-grid, .case-layout, .owner-grid { grid-template-columns: 1fr; }
+      .terminal { transform: none; }
+      .proof-strip { grid-template-columns: repeat(2, 1fr); }
+      .proof:nth-child(2) { border-right: 0; }
+      .proof:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .flow { grid-template-columns: 1fr; }
+      .arrow { transform: rotate(90deg); }
+      .design-notes, .evidence-grid, .limits-grid { grid-template-columns: 1fr; }
+      .cta-panel { align-items: flex-start; flex-direction: column; }
+    }
+    @media (max-width: 580px) {
+      .wrap { width: min(100% - 24px, 1160px); }
+      .brand span:last-child { font-size: 14px; }
+      .nav-cta { display: none; }
+      h1 { font-size: 43px; }
+      section { padding: 68px 0; }
+      .hero { padding: 62px 0 54px; }
+      .actions .button { width: 100%; }
+      .proof { padding: 17px; }
+      .proof strong { font-size: 23px; }
+      .brief { padding: 23px; }
+      .runner-head { align-items: flex-start; }
+      .event { grid-template-columns: 56px 1fr; }
+      .event .message { grid-column: 2; }
+      .cta-panel { padding: 30px 24px; }
+      footer .wrap { flex-direction: column; }
+    }
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
     }
   </style>
 </head>
 <body>
-  <a class="skip-link" href="#main">跳到主要內容</a>
-  <header class="site-header">
-    <div class="container header-inner">
+  <a class="skip" href="#main">跳到主要內容</a>
+  <header class="topbar">
+    <div class="wrap">
       <a class="brand" href="#top" aria-label="回到首頁">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h8M6 10h12M8 14h8M10 18h4"/><path d="M4 3h16v18H4z"/></svg>
-        </span>
-        <span class="brand-copy">多 AI 協作平台<small>Interactive case study</small></span>
+        <span class="mark">AI</span>
+        <span>Collaboration Platform</span>
       </a>
-      <nav class="site-nav" aria-label="主要導覽">
-        <a href="#demo">互動展示</a>
-        <a href="#capabilities">協作模式</a>
-        <a href="#architecture">系統架構</a>
-        <a href="#proof">工程證據</a>
-        <a class="nav-cta" href="#contact">作品摘要</a>
+      <nav aria-label="主要導覽">
+        <a href="#case">案例</a>
+        <a href="#architecture">架構</a>
+        <a href="#evidence">證據</a>
+        <a href="#ownership">責任</a>
+        <a class="nav-cta" href="https://github.com/ja9740913/ai-collaboration-platform" target="_blank" rel="noreferrer">GitHub ↗</a>
       </nav>
     </div>
   </header>
 
   <main id="main">
     <section class="hero" id="top">
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <div class="eyebrow">AI PRODUCT × WORKFLOW ENGINEERING</div>
-          <h1><span class="gradient-text">讓多個 AI<br>先替決策找漏洞。</span></h1>
-          <p class="hero-lead">把同一個問題交給不同模型與角色，完成拆解、質疑、比較、使用者壓測與結論整合。輸出不是更多聊天紀錄，而是一份可追溯、可驗證、可執行的決策材料。</p>
-          <div class="hero-actions">
-            <a class="button button-primary" href="#demo">啟動互動展示 <span aria-hidden="true">↘</span></a>
-            <a class="button button-secondary" href="#architecture">查看系統架構</a>
-          </div>
-          <div class="hero-note" aria-label="展示版說明">
-            <span>匿名化模擬資料</span>
-            <span>無 API Key</span>
-            <span>手機可操作</span>
+      <div class="wrap hero-grid">
+        <div>
+          <div class="eyebrow">Open engineering case study</div>
+          <h1>把多模型協作做成<em>可重跑、可測試、可追溯</em>的工作流</h1>
+          <p class="lead">不是聊天畫面，也不是只放架構圖。這是一條可在本機執行的匿名化提案評審流程：三角色並行、Schema 驗證、錯誤重試、Checkpoint 恢復，最後輸出可驗收的決策。</p>
+          <div class="actions">
+            <a class="button primary" href="#case">執行瀏覽器 Fixture <span aria-hidden="true">↓</span></a>
+            <a class="button ghost" href="https://github.com/ja9740913/ai-collaboration-platform" target="_blank" rel="noreferrer">檢視完整原始碼 ↗</a>
           </div>
         </div>
-        <div class="hero-orbit" aria-label="三個 AI 角色協作示意圖">
-          <div class="orbit-glow"></div>
-          <div class="orbit-ring"></div>
-          <div class="core-card">
-            <div class="core-icon" aria-hidden="true">⌁</div>
-            <strong>協作編排器</strong>
-            <span>路由 · 狀態 · 證據 · 合成</span>
-          </div>
-          <div class="agent-chip agent-a"><strong><i class="chip-dot"></i>Claude</strong><small>反方與風險推理</small></div>
-          <div class="agent-chip agent-b"><strong><i class="chip-dot"></i>GPT</strong><small>整合與行動建議</small></div>
-          <div class="agent-chip agent-c"><strong><i class="chip-dot"></i>USER_SIM</strong><small>使用情境壓測</small></div>
+        <div class="terminal" aria-label="本機執行示意">
+          <div class="terminal-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="terminal-title">reproducible-demo</span></div>
+          <pre><span class="cmd">$ npm ci
+$ npm run check
+</span>
+✓ strict TypeScript typecheck
+✓ 11 tests passed
+
+<span class="cmd">$ npm run demo</span>
+run_started       inputHash=02a5a856…
+role_started      risk | delivery | user
+<span class="warn">retry_scheduled   risk RATE_LIMITED 20ms</span>
+role_completed    delivery
+role_completed    user
+role_completed    risk
+<span class="ok">run_completed     pilot_with_gates</span></pre>
         </div>
       </div>
     </section>
 
-    <div class="metrics" aria-label="專案規模">
-      <div class="container metric-grid">
-        <div class="metric"><strong>9</strong><span>種多角色協作模式</span></div>
-        <div class="metric"><strong>1,900+</strong><span>個可組合角色樣本</span></div>
-        <div class="metric"><strong>23+</strong><span>個 TypeScript 測試檔</span></div>
-        <div class="metric"><strong>400+</strong><span>次內部匿名化研究紀錄</span></div>
-      </div>
+    <div class="wrap proof-strip" aria-label="專案證據摘要">
+      <div class="proof"><strong>1</strong><span>可執行端到端 Workflow</span></div>
+      <div class="proof"><strong>3</strong><span>並行評審角色</span></div>
+      <div class="proof"><strong>11 / 11</strong><span>本機自動化測試通過</span></div>
+      <div class="proof"><strong>0</strong><span>真實金鑰與客戶資料</span></div>
     </div>
 
-    <section id="demo">
-      <div class="container">
-        <div class="section-heading">
-          <div class="kicker">Interactive demo</div>
-          <h2>親手跑一次多 AI 協作</h2>
-          <p>選擇模式、調整問題，再啟動匿名化模擬。展示版不呼叫外部模型，但忠實呈現正式平台的角色路由、平行回應與結論合成流程。</p>
-        </div>
-
-        <div class="demo-shell">
-          <div class="demo-topbar">
-            <div class="window-dots" aria-hidden="true"><i></i><i></i><i></i></div>
-            <div class="demo-status">展示環境正常</div>
-          </div>
-          <div class="demo-layout">
-            <aside class="mode-panel" aria-label="協作模式">
-              <h3>研究模式</h3>
-              <div class="mode-list" id="modeList"></div>
-            </aside>
-            <div class="demo-main">
-              <div class="demo-intro">
-                <div><h3 id="demoTitle">提案評審</h3><p id="demoDescription">由提案者、評審與摘要員檢查可行性、風險與下一步。</p></div>
-                <span class="privacy-tag">● 公開展示資料</span>
+    <section id="case">
+      <div class="wrap">
+        <p class="section-kicker">01 / Runnable case</p>
+        <h2>一個案例做深：客服 AI 該直接上線，還是先做受限試點？</h2>
+        <p class="section-intro">按下執行會重播與公開 Fixture 相同的事件。這不是連到付費模型的表演，而是能用 <code>npm run demo</code> 在本機重現的確定性案例。</p>
+        <div class="case-layout">
+          <article class="brief">
+            <h3>匿名化提案輸入</h3>
+            <span class="tag">customer-service-case.json</span>
+            <span class="label">決策問題</span>
+            <p>是否在四週內把 AI 客服導入正式服務流程？</p>
+            <span class="label">限制條件</span>
+            <ul>
+              <li>先從內部 FAQ 與低風險問題開始</li>
+              <li>敏感資料不得送入未核准的第三方模型</li>
+              <li>低信心回答必須能帶上下文轉真人</li>
+            </ul>
+            <span class="label">成功標準</span>
+            <ul>
+              <li>50 題 golden set 可接受率達 90%</li>
+              <li>P95 回覆時間低於 8 秒</li>
+              <li>錯誤回答轉人工率 100%</li>
+            </ul>
+          </article>
+          <article class="runner">
+            <div class="runner-head">
+              <div>
+                <h3>事件追蹤</h3>
+                <p>固定輸入、固定回應、可重現錯誤路徑</p>
               </div>
-              <div class="prompt-box">
-                <div class="prompt-label"><span>研究問題</span><span id="charCount">0 / 240</span></div>
-                <textarea id="prompt" maxlength="240" aria-label="研究問題">請評估：是否應在四週內將 AI 助理導入客服流程？請找出風險、驗收指標與最小可行試點。</textarea>
-                <div class="prompt-actions">
-                  <div class="agents-preview" aria-label="參與角色">
-                    <span class="avatar">C</span><span class="avatar">G</span><span class="avatar">U</span><small>3 個角色待命</small>
-                  </div>
-                  <button class="run-button" id="runDemo" type="button">啟動模擬 →</button>
-                </div>
-              </div>
-
-              <div class="activity" id="activity" aria-live="polite">
-                <div class="activity-step">協作編排器解析目標與限制</div>
-                <div class="activity-step">三個角色平行研究與交叉檢視</div>
-                <div class="activity-step">合併共識、分歧與可驗證下一步</div>
-              </div>
-
-              <div class="results" id="results">
-                <article class="agent-result result-claude"><header><strong>Claude｜風險評審</strong><span class="tag">反方</span></header><p id="claudeOutput">四週全量上線風險過高。先限制在單一問題類型，並設置人工覆核與回退機制。</p></article>
-                <article class="agent-result result-gpt"><header><strong>GPT｜方案整合</strong><span class="tag">綜整</span></header><p id="gptOutput">以兩週建置、兩週觀測安排 MVP；追蹤解決率、轉人工率、回覆時間與錯誤類型。</p></article>
-                <article class="agent-result result-user"><header><strong>USER_SIM｜使用者</strong><span class="tag">壓測</span></header><p id="userOutput">使用者最在意能否快速轉真人，以及 AI 說錯時是否保留上下文，不必重新描述問題。</p></article>
-              </div>
-
-              <div class="synthesis" id="synthesis">
-                <div class="synthesis-head"><h4>協作結論</h4><span class="confidence">信心分數 82%</span></div>
-                <div class="decision-grid">
-                  <p id="decisionOutput"><b>建議：</b>有條件執行四週 MVP，不做全量上線。先選一個高頻、低風險客服意圖，保留人工核准與一鍵轉接。</p>
-                  <p class="next-step" id="nextOutput"><b>下一步：</b>建立 50 題 golden set，驗收正確率、轉人工率、P95 延遲與每次對話成本。</p>
-                </div>
-              </div>
+              <button class="run-btn" id="run-demo" type="button">▶ 執行 Fixture</button>
             </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="capabilities">
-      <div class="container">
-        <div class="section-heading">
-          <div class="kicker">Nine collaboration modes</div>
-          <h2>同一個模型不必扮演所有人</h2>
-          <p>每種任務採用不同角色拓撲、交付格式與停止條件，讓「多代理」落在可重複的工作流，而不是無限輪聊天。</p>
-        </div>
-        <div class="capability-grid">
-          <article class="capability-card"><span class="card-number">01</span><h3>直接詢問</h3><p>單一專家快速回答，適合清楚、低風險問題。</p></article>
-          <article class="capability-card"><span class="card-number">02</span><h3>圓桌討論</h3><p>多觀點補盲點，最後輸出共識與待驗證事項。</p></article>
-          <article class="capability-card"><span class="card-number">03</span><h3>正反辯論</h3><p>強制建立支持與反對論證，避免過早收斂。</p></article>
-          <article class="capability-card"><span class="card-number">04</span><h3>提案評審</h3><p>檢查 PRD、策略或流程的可行性、風險與驗收。</p></article>
-          <article class="capability-card"><span class="card-number">05</span><h3>分工研究</h3><p>協調者拆解子任務，專家並行研究後再合成。</p></article>
-          <article class="capability-card"><span class="card-number">06</span><h3>創意工作坊</h3><p>先發散選項，再依限制條件篩選與收斂。</p></article>
-          <article class="capability-card"><span class="card-number">07</span><h3>專案經理</h3><p>將模糊目標轉為里程碑、責任、風險與驗收。</p></article>
-          <article class="capability-card"><span class="card-number">08</span><h3>使用者模擬</h3><p>以多個 persona 壓測理解、操作與信任摩擦。</p></article>
-          <article class="capability-card"><span class="card-number">09</span><h3>策略決策</h3><p>比較情境、成本、風險與可逆性，形成決策紀錄。</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section id="architecture">
-      <div class="container">
-        <div class="section-heading">
-          <div class="kicker">System architecture</div>
-          <h2>從輸入到交付，每一步都有邊界</h2>
-          <p>平台把角色選擇、模型呼叫、狀態串流、證據與持久化拆成獨立層，讓功能能測、能替換，也能在失敗時恢復。</p>
-        </div>
-        <div class="architecture-panel">
-          <div class="architecture-flow" aria-label="系統資料流">
-            <div class="architecture-node"><div class="node-icon">01</div><strong>輸入與驗證</strong><span>Zod schema、權限與任務限制</span></div>
-            <div class="architecture-node"><div class="node-icon">02</div><strong>模式路由</strong><span>依任務選角色、模型與協作拓撲</span></div>
-            <div class="architecture-node"><div class="node-icon">03</div><strong>代理執行</strong><span>OpenAI、Anthropic、Claude Code、Codex</span></div>
-            <div class="architecture-node"><div class="node-icon">04</div><strong>證據與記憶</strong><span>Workspace、引用、結構化輸出、SQLite</span></div>
-            <div class="architecture-node"><div class="node-icon">05</div><strong>串流交付</strong><span>SSE 狀態、共識、分歧與下一步</span></div>
-          </div>
-          <div class="stack-row" aria-label="技術堆疊">
-            <span>Next.js 16</span><span>React 19</span><span>TypeScript</span><span>Prisma 7</span><span>SQLite</span><span>Zod</span><span>SSE</span><span>Playwright</span><span>OpenAI API</span><span>Anthropic API</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="proof">
-      <div class="container">
-        <div class="section-heading">
-          <div class="kicker">Engineering evidence</div>
-          <h2>作品重點不是模型回答，而是可靠交付</h2>
-          <p>正式專案包含型別、權限、失敗復原、工作樹隔離與回歸測試；公開版只呈現去識別後的架構與互動。</p>
-        </div>
-        <div class="proof-grid">
-          <article class="proof-card highlight">
-            <div class="proof-head"><div class="proof-icon">✓</div><h3>可測試工作流</h3></div>
-            <ul class="proof-list"><li>Structured output 與 input hash</li><li>Review → fix → verify 流程</li><li>Retry、resume 與 crash recovery</li><li>Merge E2E 與隔離執行測試</li></ul>
-            <div class="proof-meta">設計涵蓋 16 個工作流測試檔與 23+ 個 TypeScript 測試檔</div>
-          </article>
-          <article class="proof-card">
-            <div class="proof-head"><div class="proof-icon">↻</div><h3>可恢復執行</h3></div>
-            <ul class="proof-list"><li>Run store 保存執行階段與狀態</li><li>跨程序恢復與重試策略</li><li>衝突路徑先記錄再中止合併</li><li>Feature flag 保護既有路徑</li></ul>
-            <div class="proof-meta">核心目標：AI 任務失敗時能定位、重跑與追溯</div>
-          </article>
-          <article class="proof-card">
-            <div class="proof-head"><div class="proof-icon">⌁</div><h3>白盒協作</h3></div>
-            <ul class="proof-list"><li>SSE 顯示即時階段與進度</li><li>角色、模型與路由決策可見</li><li>共識與分歧分開呈現</li><li>使用者可插話、續問或 fork</li></ul>
-            <div class="proof-meta">讓使用者知道系統正在做什麼，而不是只看等待動畫</div>
-          </article>
-          <article class="proof-card">
-            <div class="proof-head"><div class="proof-icon">◇</div><h3>安全邊界</h3></div>
-            <ul class="proof-list"><li>使用者資料查詢綁定 userId</li><li>敏感操作保留人工核准</li><li>Git push 需要明確授權</li><li>公開展示不含金鑰與真實資料庫</li></ul>
-            <div class="proof-meta">展示環境與正式資料分離，避免把 demo 便利性變成風險</div>
+            <div class="events" id="events" aria-live="polite">
+              <p class="runner-empty">等待執行。流程將並行啟動 risk、delivery、user 三個角色。</p>
+            </div>
+            <div class="decision" id="decision">
+              <span class="decision-label">Structured decision</span>
+              <strong>pilot_with_gates</strong>
+              <p>先做四週受限試點；加入資料遮罩、低信心轉人工、golden set 驗收與完整稽核軌跡，再決定是否擴大。</p>
+            </div>
           </article>
         </div>
+        <p class="fixture-note">瀏覽器只重播公開事件，真正的編排、驗證、重試與恢復邏輯位於 TypeScript 原始碼。<a href="https://github.com/ja9740913/ai-collaboration-platform/blob/main/scripts/demo.ts" target="_blank" rel="noreferrer">查看 CLI 入口</a>、<a href="https://github.com/ja9740913/ai-collaboration-platform/blob/main/fixtures/provider-responses.json" target="_blank" rel="noreferrer">查看 Fixture</a>。</p>
       </div>
     </section>
 
-    <section>
-      <div class="container case-study">
-        <div class="case-copy">
-          <div class="kicker">How I work</div>
-          <h2>把 AI 快速產出，變成可以驗收的工程成果</h2>
-          <p>我在專案中同時扮演產品與工程橋接角色：先定義問題與風險，再讓 AI 分工，最後用測試、文件與實際操作收斂。</p>
-          <div class="role-pills"><span>產品規劃</span><span>系統設計</span><span>全端實作</span><span>測試驗收</span><span>AI 協作</span></div>
-        </div>
-        <div class="case-steps">
-          <article class="case-step"><div class="step-number">01</div><div><h3>先定義問題，不急著選模型</h3><p>釐清使用者、輸入資料、失敗條件、權限與交付格式。</p></div></article>
-          <article class="case-step"><div class="step-number">02</div><div><h3>把任務拆成可替換的角色與步驟</h3><p>每個角色只承擔清楚責任，並定義結構化輸出與停止條件。</p></div></article>
-          <article class="case-step"><div class="step-number">03</div><div><h3>以反方、測試與使用者模擬找漏洞</h3><p>主動建立衝突觀點，不讓第一個看似合理的答案直接成為結論。</p></div></article>
-          <article class="case-step"><div class="step-number">04</div><div><h3>把結果沉澱成可交接資產</h3><p>保留 API contract、測試、操作文件、決策紀錄與失敗復原方式。</p></div></article>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container">
-        <div class="safety-strip">
-          <div><h2>這是一份安全的公開展示</h2><p>所有問題、回應、角色與數字均為匿名化或模擬內容；沒有上傳私人對話、正式資料庫、API Key、OAuth Token 或客戶資料。</p></div>
-          <div class="safety-badge">公開展示版</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="final-cta" id="contact">
-      <div class="container">
-        <div class="final-card">
-          <div class="kicker">Portfolio summary</div>
-          <h2>AI 應用工程 × 技術專案管理 × 可驗證交付</h2>
-          <p>適合 AI 應用工程師、AI Agent／LLM 工程師、AI 產品工程師、技術 PM 與企業 AI 導入職位。完整原始碼與正式資料未公開，可於面談時展示架構、測試與實際操作。</p>
-          <div class="final-actions">
-            <a class="button button-primary" href="#demo">再跑一次展示</a>
-            <button class="button button-secondary" id="copySummary" type="button">複製作品摘要</button>
+    <section class="architecture" id="architecture">
+      <div class="wrap">
+        <p class="section-kicker">02 / Architecture</p>
+        <h2>從輸入到決策，每一層都有清楚的失敗邊界</h2>
+        <p class="section-intro">編排器不信任模型輸出。它負責輸入雜湊、角色路由、重試策略、Schema 驗證、狀態保存與決策彙整。</p>
+        <div class="flow" role="img" aria-label="輸入經過編排器分派三個角色，經結構驗證後產生決策與 checkpoint">
+          <div class="flow-box">
+            <small>Input boundary</small>
+            <h3>提案＋限制＋驗收指標</h3>
+            <p>穩定序列化後計算 inputHash，避免用錯輸入恢復舊任務。</p>
+          </div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="flow-box accent">
+            <small>Orchestrator</small>
+            <h3>平行路由與錯誤治理</h3>
+            <div class="roles"><span class="role">risk</span><span class="role">delivery</span><span class="role">user</span></div>
+            <p>限流／暫時錯誤可重試；不合法輸出不能混入最終決策。</p>
+          </div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="flow-box">
+            <small>Output boundary</small>
+            <h3>決策＋Controls＋Tests</h3>
+            <p>Checkpoint 保存角色結果與事件，失敗後可從已完成的角色繼續。</p>
           </div>
         </div>
+        <div class="design-notes">
+          <div class="design-note"><strong>Deterministic hash</strong><span>相同輸入產生相同識別；不同輸入拒絕錯誤恢復。</span></div>
+          <div class="design-note"><strong>Typed failure</strong><span>錯誤碼與 retryable 明確分離，不靠字串猜測。</span></div>
+          <div class="design-note"><strong>Atomic checkpoint</strong><span>檔案先寫暫存再 rename，降低中斷造成半份狀態。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="evidence">
+      <div class="wrap">
+        <p class="section-kicker">03 / Evidence map</p>
+        <h2>每個能力主張，都有可以點開檢查的證據</h2>
+        <p class="section-intro">如果你是面試官，不必相信頁面文案。直接從測試、程式與 CI 判斷工程品質。</p>
+        <div class="evidence-grid">
+          <a class="evidence-card" href="https://github.com/ja9740913/ai-collaboration-platform/blob/main/src/orchestrator/proposal-review.ts" target="_blank" rel="noreferrer">
+            <span class="num">EVIDENCE 01</span><h3>編排與路由</h3>
+            <p>三角色並行、事件追蹤、斷點恢復與最終決策彙整。</p><span class="link">開啟原始碼 ↗</span>
+          </a>
+          <a class="evidence-card" href="https://github.com/ja9740913/ai-collaboration-platform/blob/main/src/schemas/review-output.ts" target="_blank" rel="noreferrer">
+            <span class="num">EVIDENCE 02</span><h3>結構化輸出</h3>
+            <p>公開 JSON Schema 與 runtime validator，拒絕不可信輸出。</p><span class="link">開啟 Schema ↗</span>
+          </a>
+          <a class="evidence-card" href="https://github.com/ja9740913/ai-collaboration-platform/blob/main/src/retry-policy.ts" target="_blank" rel="noreferrer">
+            <span class="num">EVIDENCE 03</span><h3>重試策略</h3>
+            <p>只重試暫時性錯誤，尊重 retryAfter，超限即停止。</p><span class="link">開啟策略 ↗</span>
+          </a>
+          <a class="evidence-card" href="https://github.com/ja9740913/ai-collaboration-platform/tree/main/tests" target="_blank" rel="noreferrer">
+            <span class="num">EVIDENCE 04</span><h3>11 項測試</h3>
+            <p>涵蓋雜湊、Schema、重試、恢復、失敗與成功路徑。</p><span class="link">查看測試 ↗</span>
+          </a>
+          <a class="evidence-card" href="https://github.com/ja9740913/ai-collaboration-platform/actions/workflows/ci.yml" target="_blank" rel="noreferrer">
+            <span class="num">EVIDENCE 05</span><h3>GitHub Actions</h3>
+            <p>每次 push 與 pull request 執行 typecheck、tests 與 demo。</p><span class="link">查看 CI ↗</span>
+          </a>
+          <a class="evidence-card" href="https://github.com/ja9740913/ai-collaboration-platform/blob/main/docs/case-study.md" target="_blank" rel="noreferrer">
+            <span class="num">EVIDENCE 06</span><h3>案例與取捨</h3>
+            <p>問題、責任、設計選擇、驗收方式與已知限制。</p><span class="link">閱讀 Case Study ↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="ownership" id="ownership">
+      <div class="wrap">
+        <p class="section-kicker">04 / Honest ownership</p>
+        <h2>AI 是協作者；架構判斷與驗收責任由我承擔</h2>
+        <p class="section-intro">公開作品不把「用了很多 AI」包裝成個人全手寫。我負責定義問題、邊界、設計與驗收；AI 用於加速探索與產生候選實作。</p>
+        <div class="owner-grid">
+          <article class="owner-card">
+            <h3>我的責任</h3>
+            <ul>
+              <li>把模糊的展示需求改寫成可驗證的工程問題</li>
+              <li>定義工作流邊界、資料合約、錯誤分類與恢復策略</li>
+              <li>設計 Fixture、測試情境、驗收條件與安全公開範圍</li>
+              <li>逐項審查、執行測試並對最後發布結果負責</li>
+            </ul>
+          </article>
+          <article class="owner-card ai">
+            <h3>AI 協作範圍</h3>
+            <ul>
+              <li>協助列舉失敗情境與測試案例</li>
+              <li>產生候選程式、文件與介面文案</li>
+              <li>提供 reviewer 視角與反例</li>
+            </ul>
+            <p class="note">更完整的分工、來源邊界與驗證方式記錄在 ownership 文件。</p>
+            <div class="actions">
+              <a class="button ghost" href="https://github.com/ja9740913/ai-collaboration-platform/blob/main/docs/ownership.md" target="_blank" rel="noreferrer">查看責任聲明 ↗</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="limits">
+      <div class="wrap">
+        <p class="section-kicker">05 / Limits & security</p>
+        <h2>公開作品刻意縮小範圍，也清楚標示沒有證明什麼</h2>
+        <div class="limits-grid">
+          <article class="limit-card"><span class="icon" aria-hidden="true">◫</span><h3>匿名 Fixture</h3><p>不含真實客戶資料、提示詞、模型金鑰或公司內部程式。公開版證明編排方法，不公開私人系統。</p></article>
+          <article class="limit-card"><span class="icon" aria-hidden="true">⌁</span><h3>非壓力測試</h3><p>目前證明功能與錯誤路徑，不代表已通過大流量、跨區容錯或正式 SLA。</p></article>
+          <article class="limit-card"><span class="icon" aria-hidden="true">↗</span><h3>可替換 Provider</h3><p>公開版使用確定性 Provider；接真實模型需自行加入金鑰治理、成本限制與內容政策。<br><a href="https://github.com/ja9740913/ai-collaboration-platform/blob/main/docs/limitations.md" target="_blank" rel="noreferrer">完整限制 ↗</a></p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="wrap cta-panel">
+        <div>
+          <h2>五分鐘，自己重現這個決策流程</h2>
+          <p><code>npm ci</code> → <code>npm run check</code> → <code>npm run demo</code></p>
+        </div>
+        <a class="button primary" href="https://github.com/ja9740913/ai-collaboration-platform#%E5%8F%AF%E7%9B%B4%E6%8E%A5%E5%9F%B7%E8%A1%8C" target="_blank" rel="noreferrer">從 README 開始 ↗</a>
       </div>
     </section>
   </main>
 
   <footer>
-    <div class="container footer-inner"><span>多 AI 協作平台｜匿名化互動作品展示</span><span>Next.js · TypeScript · Prisma · Multi-Agent Workflow</span></div>
+    <div class="wrap">
+      <span>AI Collaboration Platform · Public engineering case study</span>
+      <span><a href="https://github.com/ja9740913/ai-collaboration-platform" target="_blank" rel="noreferrer">Source</a> · <a href="https://github.com/ja9740913/ai-collaboration-platform/security/policy" target="_blank" rel="noreferrer">Security</a></span>
+    </div>
   </footer>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <noscript><p class="wrap">此頁面的 Fixture 動畫需要 JavaScript；完整流程仍可在 GitHub 使用 npm run demo 執行。</p></noscript>
   <script>
-    const modes = [
-      { id: 'direct', icon: '01', name: '直接詢問', description: '由單一專家快速整理清楚、低風險問題。', prompt: '請將這份 AI 導入構想整理成三項可執行建議。' },
-      { id: 'discussion', icon: '02', name: '圓桌討論', description: '多個觀點補盲點，再輸出共識與待驗證事項。', prompt: '我們應該先優化新客 onboarding，還是先降低客服處理時間？' },
-      { id: 'debate', icon: '03', name: '正反辯論', description: '強制建立支持與反對論證，避免過早收斂。', prompt: '是否應該讓 AI 自動回覆所有第一線客服問題？' },
-      { id: 'review', icon: '04', name: '提案評審', description: '由提案者、評審與摘要員檢查可行性、風險與下一步。', prompt: '請評估：是否應在四週內將 AI 助理導入客服流程？請找出風險、驗收指標與最小可行試點。' },
-      { id: 'division', icon: '05', name: '分工研究', description: '協調者拆任務，專家並行研究後再合成。', prompt: '請分工研究企業導入 AI 知識庫所需的資料、權限、成本與時程。' },
-      { id: 'creative', icon: '06', name: '創意工作坊', description: '先發散選項，再依限制條件篩選與收斂。', prompt: '請提出五種讓內部同仁願意使用 AI 助理的導入活動。' },
-      { id: 'pm', icon: '07', name: '專案經理', description: '把模糊目標轉為里程碑、責任、風險與驗收。', prompt: '將「導入跨部門 AI 助理」拆成八週計畫、責任分工與驗收點。' },
-      { id: 'user', icon: '08', name: '使用者模擬', description: '用多個 persona 找出理解、操作與信任摩擦。', prompt: '請用新進員工、資深客服與主管三種角色試用 AI 客服助理。' },
-      { id: 'strategy', icon: '09', name: '策略決策', description: '比較情境、成本、風險與可逆性，形成決策紀錄。', prompt: '自建 AI 工作流與採購 SaaS 之間，未來十二個月應如何選擇？' }
+    const eventData = [
+      ["00:00", "run_started", "開始提案評審；inputHash=02a5a85668ed…", ""],
+      ["00:02", "role_started", "risk、delivery、user 並行啟動", ""],
+      ["00:05", "retry_scheduled", "risk：RATE_LIMITED；20ms 後第 2 次", "retry"],
+      ["00:06", "role_completed", "delivery 完成；stance=support", "done"],
+      ["00:08", "role_completed", "user 完成；stance=caution", "done"],
+      ["00:10", "role_completed", "risk 完成；stance=caution", "done"],
+      ["00:12", "run_completed", "評審完成；recommendation=pilot_with_gates", "done"]
     ];
+    const runButton = document.querySelector("#run-demo");
+    const events = document.querySelector("#events");
+    const decision = document.querySelector("#decision");
 
-    const outputs = {
-      direct: ['先將目標縮成一個可量測結果，避免同時處理所有客服問題。', '建議先做 FAQ 分類、回覆草稿與人工核准三個步驟。', '我希望知道何時會轉真人，以及我的問題是否已被理解。', '先做單一路徑原型，再用真實案例驗證是否節省處理時間。', '選 30 題歷史問題，建立基準答案與人工評分表。'],
-      discussion: ['若先做 onboarding，須先證明流失問題真的發生在教學階段。', '客服資料較完整，可先從回覆時間與轉人工率建立量化基線。', '新用戶需要更快看到價值；客服則需要減少重複輸入。', '先用客服資料做低風險試點，同時補 onboarding 行為數據。', '兩週內完成漏斗與客服基線，下一次決策以數據比較。'],
-      debate: ['全自動回覆會把少數高風險錯誤放大，且難以建立信任。', '低風險意圖可自動化，但敏感或低信心問題必須人工核准。', '答錯不是唯一問題；無法順暢轉真人會讓體驗更糟。', '不同意全量自動化；採信心分級與明確人工回退。', '先定義禁止自動回覆的意圖與最低信心門檻。'],
-      review: ['四週全量上線風險過高。先限制在單一問題類型，並設置人工覆核與回退機制。', '以兩週建置、兩週觀測安排 MVP；追蹤解決率、轉人工率、回覆時間與錯誤類型。', '使用者最在意能否快速轉真人，以及 AI 說錯時是否保留上下文，不必重新描述問題。', '有條件執行四週 MVP，不做全量上線。先選一個高頻、低風險客服意圖，保留人工核准與一鍵轉接。', '建立 50 題 golden set，驗收正確率、轉人工率、P95 延遲與每次對話成本。'],
-      division: ['資料面先確認可用性、個資範圍與文件版本責任人。', '技術面分成檢索、權限過濾、引用、評估與觀測五個模組。', '使用者需要看到答案來源，並知道資料最後更新時間。', '先完成一個部門的權限化知識庫，再逐步擴充資料域。', '建立資料清冊、權限矩陣、20 題測試集與四週里程碑。'],
-      creative: ['活動若只教提示詞，使用率通常不會持續；要綁定真實任務。', '可用挑戰賽、辦公時間、範本庫、成果牆與部門 champion 組合。', '同仁需要的是馬上省時間，不是再上一堂工具課。', '採兩週任務挑戰：每人帶一個重複流程，現場做出可用版本。', '先招募 10 位種子使用者，追蹤每週節省時間與重用率。'],
-      pm: ['最大風險是需求未收斂與資料責任不清，應在開發前設 gate。', '八週切成探索、原型、測試、試點與交接，週週有可驗收產物。', '跨部門使用者需要單一入口、明確支援窗口與回報管道。', '以雙週里程碑推進，每階段設定 Go / No-Go 與責任人。', '本週完成 RACI、風險清單、測試資料與成功指標。'],
-      user: ['資深客服擔心 AI 改寫專業判斷，應保留原始脈絡與修改權。', '新進員工需要範例、引用與下一步提示，降低不確定感。', '主管需要看錯誤類型與升級事件，不只看使用次數。', '介面同時提供建議答案、引用來源、編輯與一鍵轉人工。', '用三種 persona 完成 10 個情境任務，記錄卡點與信任分數。'],
-      strategy: ['自建的主要風險是維運與人才集中；SaaS 則是鎖定與資料邊界。', '採可逆決策：SaaS 驗證需求，自建關鍵路由與資料權限層。', '使用者不在意底層方案，只在意穩定、速度與資料是否可信。', '採混合策略，先買時間，再把差異化與高風險能力逐步內建。', '列出不可外包能力、退出成本、12 個月 TCO 與切換門檻。']
-    };
-
-    const modeList = document.querySelector('#modeList');
-    const prompt = document.querySelector('#prompt');
-    const charCount = document.querySelector('#charCount');
-    const runButton = document.querySelector('#runDemo');
-    const activitySteps = [...document.querySelectorAll('.activity-step')];
-    const results = document.querySelector('#results');
-    const synthesis = document.querySelector('#synthesis');
-    let currentMode = 'review';
-    let running = false;
-
-    function renderModes() {
-      modeList.innerHTML = modes.map(mode => `
-        <button class="mode-button" type="button" data-mode="${mode.id}" aria-pressed="${mode.id === currentMode}">
-          <span class="mode-icon">${mode.icon}</span><span>${mode.name}</span>
-        </button>`).join('');
+    function appendEvent([time, type, message, variant]) {
+      const row = document.createElement("div");
+      row.className = "event " + variant;
+      row.innerHTML = "<time>" + time + "</time><span class=\"type\">" + type + "</span><span class=\"message\">" + message + "</span>";
+      events.appendChild(row);
     }
 
-    function setMode(id) {
-      if (running) return;
-      const mode = modes.find(item => item.id === id);
-      if (!mode) return;
-      currentMode = id;
-      document.querySelector('#demoTitle').textContent = mode.name;
-      document.querySelector('#demoDescription').textContent = mode.description;
-      prompt.value = mode.prompt;
-      updateCount();
-      results.classList.remove('visible');
-      synthesis.classList.remove('visible');
-      activitySteps.forEach(step => step.className = 'activity-step');
-      renderModes();
+    function wait(milliseconds) {
+      return new Promise(resolve => window.setTimeout(resolve, milliseconds));
     }
 
-    function updateCount() { charCount.textContent = `${prompt.value.length} / 240`; }
-    function wait(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
-
-    async function runDemo() {
-      if (running) return;
-      running = true;
+    runButton.addEventListener("click", async () => {
       runButton.disabled = true;
-      runButton.textContent = '協作中…';
-      results.classList.remove('visible');
-      synthesis.classList.remove('visible');
-      activitySteps.forEach(step => step.className = 'activity-step');
-
-      for (let index = 0; index < activitySteps.length; index += 1) {
-        if (index > 0) activitySteps[index - 1].className = 'activity-step done';
-        activitySteps[index].className = 'activity-step active';
-        if (index === 1) {
-          const data = outputs[currentMode];
-          document.querySelector('#claudeOutput').textContent = data[0];
-          document.querySelector('#gptOutput').textContent = data[1];
-          document.querySelector('#userOutput').textContent = data[2];
-          results.classList.add('visible');
-        }
-        await wait(650);
+      runButton.textContent = "執行中…";
+      events.replaceChildren();
+      decision.classList.remove("show");
+      for (const event of eventData) {
+        appendEvent(event);
+        await wait(260);
       }
-      activitySteps.at(-1).className = 'activity-step done';
-      const data = outputs[currentMode];
-      document.querySelector('#decisionOutput').innerHTML = `<b>建議：</b>${data[3]}`;
-      document.querySelector('#nextOutput').innerHTML = `<b>下一步：</b>${data[4]}`;
-      synthesis.classList.add('visible');
+      decision.classList.add("show");
       runButton.disabled = false;
-      runButton.textContent = '重新模擬 →';
-      running = false;
-    }
-
-    function showToast(message) {
-      const toast = document.querySelector('#toast');
-      toast.textContent = message;
-      toast.classList.add('visible');
-      window.setTimeout(() => toast.classList.remove('visible'), 2200);
-    }
-
-    modeList.addEventListener('click', event => {
-      const button = event.target.closest('[data-mode]');
-      if (button) setMode(button.dataset.mode);
+      runButton.textContent = "↻ 再執行一次";
     });
-    prompt.addEventListener('input', updateCount);
-    runButton.addEventListener('click', runDemo);
-    document.querySelector('#copySummary').addEventListener('click', async () => {
-      const summary = '多 AI 協作平台：以 Next.js、React、TypeScript、Prisma 與 SQLite 建置，整合 OpenAI、Anthropic、Claude Code SDK 與 Codex CLI；包含 9 種多角色工作流、SSE 即時狀態、結構化輸出、工作區記憶、重試／恢復與回歸測試。';
-      try { await navigator.clipboard.writeText(summary); showToast('作品摘要已複製'); }
-      catch { showToast('請手動選取頁面內容複製'); }
-    });
-
-    renderModes();
-    updateCount();
   </script>
 </body>
 </html>

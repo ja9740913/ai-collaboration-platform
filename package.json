@@ -1,0 +1,20 @@
+{
+  "name": "ai-collaboration-platform-evidence",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "可執行、可測試的多 AI 提案評審工作流公開案例。",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "demo": "node scripts/demo.ts",
+    "test": "node --test --test-reporter=spec tests/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm test"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3"
+  }
+}
